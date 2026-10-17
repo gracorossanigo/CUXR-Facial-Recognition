@@ -25,11 +25,9 @@ print(lfw.target_names[:5]) # identity labels
 
 
 
-# Fixed seed so the split is reproducible
 rng = np.random.default_rng(42)
 enroll_idx, eval_idx, unknown_idx = [], [], []
 
-# Hold out ~20% of identities entirely as unknowns (person-disjoint from gallery)
 identities = np.unique(lfw.target)
 rng.shuffle(identities)
 unknown_ids = set(identities[:len(identities) // 5])
@@ -39,7 +37,6 @@ for pid in identities:
     if pid in unknown_ids:
         unknown_idx.extend(idx)
         continue
-    # Split each known identity's images into enrollment (gallery) and evaluation
     rng.shuffle(idx)
     n_enroll = max(1, len(idx) // 2)
     enroll_idx.extend(idx[:n_enroll])
@@ -49,7 +46,6 @@ enroll_idx = np.array(enroll_idx)
 eval_idx = np.array(eval_idx)
 unknown_idx = np.array(unknown_idx)
 
-# No image may appear in both the gallery and the evaluation set
 assert not set(enroll_idx) & set(eval_idx)
 
 image = cv2.imread('data/lfw_home/lfw_funneled/Aaron_Eckhart/Aaron_Eckhart_0001.jpg')
